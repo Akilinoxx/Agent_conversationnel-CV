@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exemple d'intégration - Portfolio Antoine Goupil</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1, h2 {
+            color: #2c3e50;
+        }
+        .instructions {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border-left: 4px solid #007bff;
+        }
+        pre {
+            background-color: #f1f1f1;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        code {
+            font-family: Consolas, Monaco, 'Andale Mono', monospace;
+        }
+    </style>
+</head>
+<body>
+    <h1>Intégration de l'Agent Conversationnel CV dans votre Portfolio</h1>
+    
+    <div class="instructions">
+        <h2>Instructions d'intégration</h2>
+        <p>Voici comment intégrer l'agent conversationnel CV dans votre portfolio GitHub Pages :</p>
+        
+        <h3>Étape 1 : Ajouter le script d'intégration</h3>
+        <p>Ajoutez le script suivant dans votre fichier HTML principal (par exemple, index.html) :</p>
+        <pre><code>&lt;script src="https://votre-api-deployee.com/static/portfolio-integration.js"&gt;&lt;/script&gt;</code></pre>
+        
+        <h3>Étape 2 : C'est tout !</h3>
+        <p>Le script créera automatiquement un bouton de chat flottant dans le coin inférieur droit de votre portfolio. Aucune autre modification n'est nécessaire.</p>
+    </div>
+    
+    <h2>Personnalisation (optionnelle)</h2>
+    <p>Si vous souhaitez personnaliser l'apparence ou le comportement du chatbot, vous pouvez modifier le fichier <code>portfolio-integration.js</code> selon vos besoins.</p>
+    
+    <h2>Déploiement de l'API</h2>
+    <p>Pour que l'intégration fonctionne, vous devez déployer l'API sur une plateforme comme Render, Deta Space ou Heroku. Une fois déployée, mettez à jour l'URL de l'API dans le fichier <code>portfolio-integration.js</code> :</p>
+    <pre><code>// Remplacez cette ligne
+const API_URL = 'https://votre-api-deployee.com/api/chat/stream';
+
+// Par l'URL réelle de votre API déployée
+const API_URL = 'https://votre-api-reelle.com/api/chat/stream';</code></pre>
+    
+    <h2>Exemple en direct</h2>
+    <p>Voici un exemple de l'agent conversationnel intégré dans cette page :</p>
+    
+    <!-- Le script d'intégration sera chargé ici -->
+    <script src="portfolio-integration.js"></script>
+</body>
+</html>
