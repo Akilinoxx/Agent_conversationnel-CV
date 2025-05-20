@@ -54,8 +54,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const openButton = chatbotContainer.querySelector('.cv-chatbot-toggle-open');
     const minimizeButton = chatbotContainer.querySelector('.cv-chatbot-toggle-minimize');
     
-    // URL de l'API (à remplacer par l'URL de votre API déployée)
-    const API_URL = 'https://votre-api-deployee.com/api/chat/stream';
+    // URL de l'API déployée sur Render
+    const API_URL = 'https://agent-conversationnel-cv-1.onrender.com/api/chat/stream';
     
     // Fonction pour ajouter un message dans la conversation
     function addMessage(content, isUser = false) {
@@ -155,23 +155,6 @@ document.addEventListener('DOMContentLoaded', function() {
         addTypingIndicator();
         
         try {
-            // Simuler une réponse pour le développement local
-            // Remplacer cette partie par l'appel API réel une fois déployé
-            setTimeout(() => {
-                removeTypingIndicator();
-                
-                // Réponse simulée
-                const simulatedResponse = "Je suis actuellement en mode de démonstration locale. Pour obtenir des réponses réelles, veuillez déployer l'API et mettre à jour l'URL dans le script.";
-                addMessage(simulatedResponse, false);
-                
-                // Réactiver l'entrée utilisateur
-                chatInput.disabled = false;
-                sendButton.disabled = false;
-                chatInput.focus();
-            }, 1500);
-            
-            /* DÉCOMMENTER ET ADAPTER CE CODE UNE FOIS L'API DÉPLOYÉE
-            
             // Préparer la requête
             const response = await fetch(API_URL, {
                 method: 'POST',
@@ -250,12 +233,25 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
             
-            */
-            
         } catch (error) {
             console.error('Erreur lors de la communication avec l\'API:', error);
             removeTypingIndicator();
-            addMessage('Désolé, une erreur est survenue lors de la communication avec l\'API.', false);
+            
+            // Afficher des informations plus détaillées sur l'erreur
+            let errorMessage = 'Désolé, une erreur est survenue lors de la communication avec l\'API.';
+            
+            if (error.message) {
+                errorMessage += ' Détail : ' + error.message;
+                console.log('Message d\'erreur:', error.message);
+            }
+            
+            // Vérifier si c'est une erreur CORS
+            if (error.message && error.message.includes('CORS')) {
+                errorMessage += ' Il semble y avoir un problème de CORS. Veuillez vérifier les paramètres CORS de l\'API.';
+                console.log('Erreur CORS détectée');
+            }
+            
+            addMessage(errorMessage, false);
             
             // Réactiver l'entrée utilisateur
             chatInput.disabled = false;

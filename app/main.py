@@ -17,11 +17,7 @@ app = FastAPI(
 # Configuration CORS pour permettre l'intégration avec le portfolio
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "https://akilinoxx.github.io",  # Domaine du portfolio
-        "http://localhost:8000",        # Pour le développement local
-        "http://127.0.0.1:8000"         # Pour le développement local
-    ],
+    allow_origins=["*"],  # Autoriser tous les domaines pour simplifier le développement
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

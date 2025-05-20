@@ -131,8 +131,8 @@
             const userInput = document.getElementById('user-input');
             const sendButton = document.getElementById('send-button');
             
-            // URL de l'API (à ajuster selon votre configuration)
-            const API_URL = 'http://localhost:8000/api/chat/stream';
+            // URL de l'API déployée sur Render
+            const API_URL = 'https://agent-conversationnel-cv-1.onrender.com/api/chat/stream';
             
             // Fonction pour ajouter un message dans la conversation
             function addMessage(content, isUser = false) {
