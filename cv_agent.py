@@ -49,7 +49,7 @@ class CVAgent:
         # Système prompt pour définir le comportement de l'agent
         self.system_prompt = """
         Tu es un agent conversationnel spécialisé qui représente Antoine Goupil dans le cadre de son CV et portfolio professionnel.
-        Tu dois répondre UNIQUEMENT aux questions concernant ses compétences, son expérience, sa formation et ses projets.
+        Tu dois répondre aux questions concernant ses compétences, son expérience, sa formation, ses projets, ainsi que ses coordonnées et sa disponibilité.
         
         INSTRUCTIONS IMPORTANTES :
         1. Utilise les informations fournies dans le contexte pour répondre de manière précise et détaillée.
@@ -58,13 +58,48 @@ class CVAgent:
         4. Si une information spécifique n'est pas disponible dans le contexte, utilise les informations générales fournies pour donner une réponse pertinente.
         5. Mets en valeur les réalisations concrètes et les compétences techniques lorsque c'est pertinent.
         6. Réponds toujours en français, sauf si on te demande explicitement de répondre dans une autre langue.
-        7. REFUSE CATÉGORIQUEMENT de répondre aux questions sans rapport avec Antoine Goupil ou son CV. Pour ces questions, rappelle poliment que tu es là uniquement pour discuter du profil professionnel d'Antoine Goupil.
+        7. Pour les questions concernant les coordonnées et la disponibilité, fournis les informations exactes indiquées dans les données de contact.
+        8. REFUSE CATÉGORIQUEMENT de répondre aux questions sans rapport avec Antoine Goupil ou son CV. Pour ces questions, rappelle poliment que tu es là uniquement pour discuter du profil professionnel d'Antoine Goupil.
         
         Tu représentes Antoine Goupil, un professionnel spécialisé dans l'automatisation, le développement web et l'intelligence artificielle, avec une approche innovante et une capacité à résoudre des problèmes complexes.
         """
+        
+        # Informations de contact et disponibilité
+        self.contact_info = {
+            "email": "antoine.goupil@example.com",
+            "telephone": "06 12 34 56 78",
+            "linkedin": "linkedin.com/in/antoine-goupil",
+            "site_web": "antoinegoupil.fr",
+            "disponibilite": "Disponible à partir du 1er juillet 2025 pour des missions en freelance ou CDI",
+            "horaires": "Du lundi au vendredi, de 9h à 18h",
+            "localisation": "Paris, France (possibilité de télétravail)"
+        }
     
     def retrieve_relevant_context(self, query: str, top_k: int = 10) -> str:
         """Récupère les passages les plus pertinents du CV pour la requête."""
+        # Vérifier si la question concerne les coordonnées ou la disponibilité
+        query_lower = query.lower()
+        contact_keywords = ["contact", "email", "mail", "courriel", "téléphone", "telephone", "portable", "numéro", "linkedin", "site web", "site internet", "disponible", "disponibilité", "horaires", "quand", "où", "ou", "joindre", "contacter"]
+        
+        is_contact_query = any(keyword in query_lower for keyword in contact_keywords)
+        
+        if is_contact_query:
+            # Créer un contexte spécifique pour les informations de contact
+            contact_context = """
+            [Informations de contact d'Antoine Goupil]
+            Email: antoine.goupil@example.com
+            Téléphone: 06 12 34 56 78
+            LinkedIn: linkedin.com/in/antoine-goupil
+            Site web: antoinegoupil.fr
+            
+            [Disponibilité d'Antoine Goupil]
+            Statut: Disponible à partir du 1er juillet 2025 pour des missions en freelance ou CDI
+            Horaires: Du lundi au vendredi, de 9h à 18h
+            Localisation: Paris, France (possibilité de télétravail)
+            """
+            return contact_context
+        
+        # Pour les autres types de questions, continuer avec le traitement normal
         # Vectoriser la requête
         results = self.vector_store.similarity_search(
             query=query,
@@ -133,7 +168,10 @@ class CVAgent:
                 "recrutement", "recruter", "embaucher", "cv", "portfolio", "développement", 
                 "web", "automatisation", "intelligence artificielle", "ia", "programmation", 
                 "python", "javascript", "technologie", "aider", "contribuer", "qualification",
-                "profil", "parcours", "carrière", "poste", "mission", "réalisation"
+                "profil", "parcours", "carrière", "poste", "mission", "réalisation",
+                "contact", "email", "mail", "téléphone", "telephone", "portable", "numéro",
+                "linkedin", "site web", "disponible", "disponibilité", "horaires", "quand",
+                "où", "ou", "joindre", "contacter"
             ]
             
             # Vérifier les mots-clés hors sujet
@@ -169,7 +207,9 @@ class CVAgent:
                 "antoine", "goupil", "compétence", "expérience", "formation", "projet", "travail", 
                 "emploi", "recrutement", "recruter", "embaucher", "cv", "portfolio", "développement", 
                 "web", "automatisation", "intelligence artificielle", "ia", "programmation", "python", 
-                "javascript", "contact", "salaire", "disponibilité", "technologie", "langchain", "mistral"
+                "javascript", "contact", "email", "mail", "téléphone", "telephone", "portable", "numéro",
+                "linkedin", "site web", "disponible", "disponibilité", "horaires", "quand", "où", "ou",
+                "joindre", "contacter", "salaire", "technologie", "langchain", "mistral"
             ]
             
             # Vérifier si la question contient au moins un mot-clé lié au CV
