@@ -58,22 +58,11 @@ class CVAgent:
         4. Si une information spécifique n'est pas disponible dans le contexte, utilise les informations générales fournies pour donner une réponse pertinente.
         5. Mets en valeur les réalisations concrètes et les compétences techniques lorsque c'est pertinent.
         6. Réponds toujours en français, sauf si on te demande explicitement de répondre dans une autre langue.
-        7. Pour les questions concernant les coordonnées et la disponibilité, fournis les informations exactes indiquées dans les données de contact.
+        7. Pour les questions concernant les coordonnées et la disponibilité, fournis les informations exactes indiquées dans le contexte.
         8. REFUSE CATÉGORIQUEMENT de répondre aux questions sans rapport avec Antoine Goupil ou son CV. Pour ces questions, rappelle poliment que tu es là uniquement pour discuter du profil professionnel d'Antoine Goupil.
         
         Tu représentes Antoine Goupil, un professionnel spécialisé dans l'automatisation, le développement web et l'intelligence artificielle, avec une approche innovante et une capacité à résoudre des problèmes complexes.
         """
-        
-        # Informations de contact et disponibilité
-        self.contact_info = {
-            "email": "antoine.goupil@example.com",
-            "telephone": "06 12 34 56 78",
-            "linkedin": "linkedin.com/in/antoine-goupil",
-            "site_web": "antoinegoupil.fr",
-            "disponibilite": "Disponible à partir du 1er juillet 2025 pour des missions en freelance ou CDI",
-            "horaires": "Du lundi au vendredi, de 9h à 18h",
-            "localisation": "Paris, France (possibilité de télétravail)"
-        }
     
     def retrieve_relevant_context(self, query: str, top_k: int = 10) -> str:
         """Récupère les passages les plus pertinents du CV pour la requête."""
@@ -83,21 +72,35 @@ class CVAgent:
         
         is_contact_query = any(keyword in query_lower for keyword in contact_keywords)
         
+        # Pour les questions de contact, utiliser une requête spécifique pour trouver les informations de contact
         if is_contact_query:
-            # Créer un contexte spécifique pour les informations de contact
-            contact_context = """
-            [Informations de contact d'Antoine Goupil]
-            Email: antoine.goupil@example.com
-            Téléphone: 06 12 34 56 78
-            LinkedIn: linkedin.com/in/antoine-goupil
-            Site web: antoinegoupil.fr
+            # Créer une requête spécifique pour trouver les informations de contact dans la base de connaissances
+            contact_query = "coordonnées contact email téléphone disponibilité Antoine Goupil"
             
-            [Disponibilité d'Antoine Goupil]
-            Statut: Disponible à partir du 1er juillet 2025 pour des missions en freelance ou CDI
-            Horaires: Du lundi au vendredi, de 9h à 18h
-            Localisation: Paris, France (possibilité de télétravail)
+            # Récupérer les informations de contact depuis la base de connaissances vectorielle
+            contact_results = self.vector_store.similarity_search(
+                query=contact_query,
+                k=5  # Augmenter le nombre de résultats pour maximiser les chances de trouver les informations de contact
+            )
+            
+            # Extraire et formater le contexte de contact
+            contact_parts = []
+            for i, doc in enumerate(contact_results):
+                source = doc.metadata.get('source', 'Source inconnue')
+                page = doc.metadata.get('page', 'Page inconnue')
+                content = doc.page_content
+                
+                contact_part = f"[Document {i+1}, Source: {source}, Page: {page}]\n{content}\n"
+                contact_parts.append(contact_part)
+            
+            # Ajouter une introduction pour les informations de contact
+            contact_intro = """
+            [Informations de contact et disponibilité d'Antoine Goupil]
+            Les informations suivantes ont été extraites des documents du CV:
             """
-            return contact_context
+            contact_parts.insert(0, contact_intro)
+            
+            return "\n".join(contact_parts)
         
         # Pour les autres types de questions, continuer avec le traitement normal
         # Vectoriser la requête
